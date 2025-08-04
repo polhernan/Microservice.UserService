@@ -1,0 +1,22 @@
+﻿{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning"
+      }
+    },
+    "Enrich": [ "FromLogContext", "WithMachineName", "WithThreadId", "WithProcessId" ],
+    "WriteTo": [
+      {
+        "Name": "Elasticsearch",
+        "Args": {
+          "nodeUris": "http://localhost:9200",
+          "indexFormat": "servu-logs-{0:yyyy.MM.dd}",
+          "autoRegisterTemplate": true
+        }
+      }
+    ]
+  }
+}
