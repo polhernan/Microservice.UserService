@@ -1,7 +1,10 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserService.Application.Common.Models;
 using UserService.Application.Contexts.CtxUsers.Commands.CreateUser;
+using UserService.Application.Contexts.Users.Commands.UpdateUser;
 using UserService.Domain.Entities;
 
 namespace UserService.API.Controllers
@@ -34,6 +37,27 @@ namespace UserService.API.Controllers
             var result = await _bus.Send(request);
 
             return result;
+        }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<Result<User>> UpdateUser(UpdateUserCommand request)
+        {
+            request.SetUserId(GetUserIdByClaims());
+
+            var result = await _bus.Send(request);
+
+            return result;
+        }
+
+        public Guid GetUserIdByClaims()
+        {
+            string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userId))
+                return Guid.Empty;
+
+            return Guid.Parse(userId!);
         }
     }
 }
