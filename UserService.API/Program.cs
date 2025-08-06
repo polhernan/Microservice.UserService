@@ -1,11 +1,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
 using Serilog;
+using System.Net;
 using System.Text;
 using UserService.Application.Common.Implementations;
 using UserService.Application.Common.PipelineBehavirs;
@@ -18,9 +20,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
+// dotnet ef migrations add InitialCreateInv --project .\UserService.Infrastructure --startup-project .\UserService.API --output-dir Migrations
+// dotnet ef database update --project .\UserService.Infrastructure --startup-project .\UserService.API
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+});
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
@@ -99,6 +109,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.UseForwardedHeaders();
 
 app.UseHttpsRedirection();
 

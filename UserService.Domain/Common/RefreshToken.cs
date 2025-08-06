@@ -10,6 +10,7 @@ namespace UserService.Domain.Common
 
 
         public string Token { get; set; }
+        public string? IpAddress { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpiresAt { get; set; }
         public DateTime? RevokedAt { get; set; }
@@ -22,7 +23,7 @@ namespace UserService.Domain.Common
         private RefreshToken() { }
 
 
-        public static Result<RefreshToken> Create(string token, TimeSpan duration)
+        public static Result<RefreshToken> Create(string token, TimeSpan duration, string? ipAddress)
         {
             if (string.IsNullOrWhiteSpace(token))
                 return Result<RefreshToken>.Failure("Token can't be empty");
@@ -33,7 +34,8 @@ namespace UserService.Domain.Common
             {
                 Token = token,
                 CreatedAt = now,
-                ExpiresAt = now.Add(duration)
+                ExpiresAt = now.Add(duration),
+                IpAddress = ipAddress
             });
         }
 

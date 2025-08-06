@@ -88,12 +88,13 @@ namespace UserService.Domain.Entities
             return hasher.Verify(PasswordHash, plainPassword);
         }
 
-        public Result<RefreshToken> AddRefreshToken(IJwtTokenService tokenService, JwtSettings jwtSettings)
+        public Result<RefreshToken> AddRefreshToken(IJwtTokenService tokenService, JwtSettings jwtSettings, string? ipAddress)
         {
             // Testing purpouses.
             Result<RefreshToken> resultRefreshToken = RefreshToken.Create(
                 tokenService.GenerateJwtToken(this), 
-                new TimeSpan(0,jwtSettings.ExpirationMinutes,0)
+                new TimeSpan(0,jwtSettings.ExpirationMinutes,0),
+                ipAddress
                 );
 
             if (resultRefreshToken.Succeded)

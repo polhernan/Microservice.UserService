@@ -44,6 +44,8 @@ namespace UserService.Application.Contexts.Users.Commands.UpdateUser
                 user.Surnames = request.Surnames;
             }
 
+            user.UpdateEntity();
+
             await _context.SaveChangesAsync();
 
             return Result<User>.Success(user);

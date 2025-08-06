@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using UserService.Application.Common.Models;
 using UserService.Application.Contexts.Auth.Commands.LogIn;
 using UserService.Application.Contexts.Auth.Queries.TokenOwner;
@@ -49,11 +50,26 @@ namespace UserService.API.Controllers
 
 
         [HttpPost("login")]
-        public async Task<Result<RefreshToken>> CreateUser(LogInUserCommand request)
+        public async Task<Result<RefreshToken>> LogIn(LogInUserCommand request)
         {
+            request.SetIpAddress(GetIpFromRequest());
+
             var result = await _bus.Send(request);
 
             return result;
+        }
+
+        [NonAction]
+        public string? GetIpFromRequest()
+        {
+            string? ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+
+            if(HttpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+            {
+                ip = forwardedFor.FirstOrDefault();
+            }
+
+            return ip;
         }
     }
 }

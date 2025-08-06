@@ -41,7 +41,7 @@ namespace UserService.Application.Contexts.Auth.Commands.LogIn
 
             string token = _tokenService.GenerateJwtToken(user);
 
-            Result<RefreshToken> refreshTokenResult = user.AddRefreshToken(_tokenService, _jwtSettings.Value);
+            Result<RefreshToken> refreshTokenResult = user.AddRefreshToken(_tokenService, _jwtSettings.Value, request.GetIpAddress());
 
             if(refreshTokenResult.Succeded)
                 await _context.SaveChangesAsync();
