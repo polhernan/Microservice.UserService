@@ -50,6 +50,7 @@ namespace UserService.API.Controllers
             return result;
         }
 
+        [NonAction]
         public Guid GetUserIdByClaims()
         {
             string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
